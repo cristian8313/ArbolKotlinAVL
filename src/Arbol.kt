@@ -10,8 +10,18 @@ class Arbol (var raiz: Nodo?) {
         if (raiz != null)
             raiz?.enOrden()
     }
+    
+    private fun enOrden(raiz : Nodo?) {
+        if(raiz.izquierdo != null)
+            raiz.izquierdo?.enOrden();
 
-    fun insertarNodo(raiz: Nodo?, elemento: Elemento) : Nodo {
+        println("Elemento: " + raiz.dato.toString());
+
+        if(raiz.derecho != null)
+            raiz.derecho?.enOrden();
+    }
+
+    /*fun insertarNodo(raiz: Nodo?, elemento: Elemento) : Nodo {
         // inserta un dato nuevo en el árbol
         if (raiz == null) {
             // si no hay nodos en el árbol lo agrega
@@ -33,25 +43,28 @@ class Arbol (var raiz: Nodo?) {
             }
             return raiz
         }
-    }
+    }*/
     
-    fun insert(key: Int): Boolean {
-        if (root == null)
-            root = Node(key, null)
+    fun insert(elemento: Elemento): Boolean {
+        if (raiz == null)
+            raiz = crearNodo(elemento)
         else {
-            var n: Node? = root
-            var parent: Node
+            var nodo: Nodo? = raiz
+            var nuevoNodo: Nodo
             while (true) {
-                if (n!!.key == key) return false
-                parent = n
-                val goLeft = n.key > key
-                n = if (goLeft) n.left else n.right
-                if (n == null) {
+                if (nodo!!.dato.compareTo(elemento) == 0) return false
+                nuevoNodo = nodo
+                val goLeft = nodo.dato.compareTo(elemento) > 0
+                nodo = if (goLeft) 
+                            nodo.izquierda 
+                        else 
+                            nodo.derecha
+                if (nodo == null) {
                     if (goLeft)
-                        parent.left  = Node(key, parent)
+                        nuevoNodo.izquierda = Nodo(elemento, nuevoNodo)
                     else
-                        parent.right = Node(key, parent)
-                    rebalance(parent)
+                        nuevoNodo.derecha = Nodo(elemento, nuevoNodo)
+                    rebalance(nuevoNodo)
                     break
                 }
             }
@@ -60,74 +73,74 @@ class Arbol (var raiz: Nodo?) {
     }
     
     
-     private fun rebalance(n: Node) {
-        setBalance(n)
-        var nn = n
-        if (nn.balance == -2)
-            if (height(nn.left!!.left) >= height(nn.left!!.right))
-                nn = rotateRight(nn)
+     private fun rebalance(nodo: Nodo) {
+        setBalance(nodo)
+        var otroNodo = nodo
+        if (otroNodo.balance == -2)
+            if (height(otroNodo.izquierda!!.izquierda) >= height(otroNodo.izquierda!!.derecha))
+                otroNodo = rotateRight(otroNodo)
             else
-                nn = rotateLeftThenRight(nn)
-        else if (nn.balance == 2)
-            if (height(nn.right!!.right) >= height(nn.right!!.left))
-                nn = rotateLeft(nn)
+                otroNodo = rotateLeftThenRight(otroNodo)
+        else if (otroNodo.balance == 2)
+            if (height(otroNodo.derecha!!.derecha) >= height(otroNodo.derecha!!.izquierda))
+                otroNodo = rotateLeft(otroNodo)
             else
-                nn = rotateRightThenLeft(nn)
-        if (nn.parent != null) rebalance(nn.parent!!)
-        else root = nn
+                otroNodo = rotateRightThenLeft(otroNodo)
+        if (otroNodo.padre != null) rebalance(otroNodo.padre!!)
+        else raiz = otroNodo
     }
  
-    private fun rotateLeft(a: Node): Node {
-        val b: Node? = a.right
-        b!!.parent = a.parent
-        a.right = b.left
-        if (a.right != null) a.right!!.parent = a
-        b.left = a
-        a.parent = b
-        if (b.parent != null) {
-            if (b.parent!!.right == a)
-                b.parent!!.right = b
+    private fun rotateLeft(unNodo: Nodo): Nodo {
+        val nodoDerecho: Nodo? = unNodo.derecha
+        nodoDerecho!!.padre = unNodo.padre
+        unNodo.derecha = nodoDerecho.izquierda
+        if (unNodo.derecha != null) unNodo.derecha!!.padre = unNodo
+        nodoDerecho.izquierda = unNodo
+        unNodo.padre = nodoDerecho
+        if (b.padre != null) {
+            if (nodoDerecho.padre!!.derecha == unNodo)
+                nodoDerecho.padre!!.derecha = nodoDerecho
             else
-                b.parent!!.left = b
+                nodoDerecho.padre!!.izquierda = nodoDerecho
         }
-        setBalance(a, b)
-        return b
+        setBalance(unNodo, nodoDerecho)
+        return nodoDerecho
     }
  
-    private fun rotateRight(a: Node): Node {
-        val b: Node? = a.left
-        b!!.parent = a.parent
-        a.left = b.right
-        if (a.left != null) a.left!!.parent = a
-        b.right = a
-        a.parent = b
-        if (b.parent != null) {
-            if (b.parent!!.right == a)
-                b.parent!!.right = b
+    private fun rotateRight(nuNodo: Nodo): Nodo {
+        val nodoIzquierdo: Nodo? = nuNodo.izquierda
+        nodoIzquierdo!!.padre = nuNodo.padre
+        nuNodo.izquierda = nodoIzquierdo.derecha
+        if (nuNodo.izquierda != null) nuNodo.izquierda!!.padre = nuNodo
+        nodoIzquierdo.derecha = nuNodo
+        nuNodo.padre = nodoIzquierdo
+        if (nodoIzquierdo.padre != null) {
+            if (nodoIzquierdo.padre!!.derecha == nuNodo)
+                nodoIzquierdo.padre!!.derecha = nodoIzquierdo
             else
-                b.parent!!.left = b
+                nodoIzquierdo.padre!!.izquierda = nodoIzquierdo
         }
-        setBalance(a, b)
-        return b
+        setBalance(nuNodo, nodoIzquierdo)
+        return nodoIzquierdo
     }
  
-    private fun rotateLeftThenRight(n: Node): Node {
-        n.left = rotateLeft(n.left!!)
-        return rotateRight(n)
+    private fun rotateLeftThenRight(unNodo: Nodo): Nodo {
+        unNodo.left = rotateLeft(unNodo.left!!)
+        return rotateRight(unNodo)
     }
  
-    private fun rotateRightThenLeft(n: Node): Node {
-        n.right = rotateRight(n.right!!)
-        return rotateLeft(n)
+    private fun rotateRightThenLeft(unNodo: Nodo): Nodo {
+        unNodo.right = rotateRight(unNodo.right!!)
+        return rotateLeft(unNodo)
     }
  
-    private fun height(n: Node?): Int {
-        if (n == null) return -1
-        return 1 + Math.max(height(n.left), height(n.right))
+    private fun height(unNodo: Nodo?): Int {
+        if (unNodo == null) return -1
+        return 1 + Math.max(height(unNodo.izquierda), height(unNodo.derecha))
     }
  
-    private fun setBalance(vararg nodes: Node) {
-        for (n in nodes) n.balance = height(n.right) - height(n.left)
+    private fun setBalance(vararg nodos: Nodo) {
+        for (nodo in nodes) nodo.balance = height(nodo.derecha) - height(nodo.izquierda)
     }
 
 }
