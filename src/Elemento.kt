@@ -1,0 +1,1 @@
+data class Elemento(val letra: Char, var prioridad: Int)
