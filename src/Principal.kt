@@ -28,13 +28,17 @@ fun main(args: Array<String>) {
 
     a2.imprimir(a2.raiz)
     println("Letra: " + a2.raiz?.dato?.letra + "  - Prioridad: " + a2.raiz?.dato?.prioridad)*/
+    val arbol = Arbol(null)
     
-    fun main(args: Array<String>) {
-    val tree = AvlTree()
-    println("Inserting values 1 to 10")
-    for (i in 1..10) tree.insert(i)
-    print("Printing key     : ")
-    tree.printKey()
-    print("Printing balance : ")
-    tree.printBalance()
+    var e1 = Elemento('a',1)
+    var e2 = Elemento('a',1)
+    var e3 = Elemento('c',1)
+    var e4 = Elemento('a',1)
+    
+    arbol.insert(e1)
+    arbol.insert(e2)
+    arbol.insert(e3)
+    arbol.insert(e4)
+    
+    arbol.imprimir(arbol.raiz)  
 }
