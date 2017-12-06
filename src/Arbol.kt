@@ -21,7 +21,8 @@ class Arbol (var raiz: Nodo?) {
             if (elemento.letra == raiz.dato?.letra) {
                 raiz.dato.prioridad++
             } else {
-                if (elemento.prioridad <= raiz.dato.prioridad) {
+                //if (elemento.prioridad <= raiz.dato.prioridad) {
+                if (elemento.compareTo(raiz.dato) <= 0) {
                     // si el dato ingresado es  menor que el dato
                     // guardado va al subárbol izquierdo
                     raiz.izquierdo = insertarNodo(raiz.izquierdo, elemento)
